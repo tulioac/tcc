@@ -1,14 +1,14 @@
-import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Route, useRouteMatch, useHistory } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 
-import useMergeState from 'shared/hooks/mergeState';
 import { Breadcrumbs, Modal } from 'shared/components';
+import useMergeState from 'shared/hooks/mergeState';
 
-import Header from './Header';
 import Filters from './Filters';
-import Lists from './Lists';
+import Header from './Header';
 import IssueDetails from './IssueDetails';
+import Lists from './Lists';
 
 const propTypes = {
   project: PropTypes.object.isRequired,
