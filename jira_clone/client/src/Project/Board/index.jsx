@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useDeferredValue } from 'react';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 
 import { Breadcrumbs, Modal } from 'shared/components';
@@ -29,6 +29,8 @@ const ProjectBoard = ({ project, fetchProject, updateLocalProjectIssues }) => {
 
   const [filters, mergeFilters] = useMergeState(defaultFilters);
 
+  const deferredFilters = useDeferredValue(filters);
+
   return (
     <Fragment>
       <Breadcrumbs items={['Projects', project.name, 'Kanban Board']} />
@@ -41,7 +43,7 @@ const ProjectBoard = ({ project, fetchProject, updateLocalProjectIssues }) => {
       />
       <Lists
         project={project}
-        filters={filters}
+        filters={deferredFilters}
         updateLocalProjectIssues={updateLocalProjectIssues}
       />
       <Route
