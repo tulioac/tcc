@@ -1,20 +1,22 @@
-import 'module-alias/register';
-import 'dotenv/config';
-import 'reflect-metadata';
-import express from 'express';
 import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
+import 'module-alias/register';
+import 'reflect-metadata';
 
 import createDatabaseConnection from 'database/createConnection';
-import { addRespondToResponse } from 'middleware/response';
+import { RouteNotFoundError } from 'errors';
 import { authenticateUser } from 'middleware/authentication';
 import { handleError } from 'middleware/errors';
-import { RouteNotFoundError } from 'errors';
+import { addRespondToResponse } from 'middleware/response';
 
-import { attachPublicRoutes, attachPrivateRoutes } from './routes';
+import { attachPrivateRoutes, attachPublicRoutes } from './routes';
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
+    console.log('Connecting to database...');
     await createDatabaseConnection();
+    console.log('Connected!');
   } catch (error) {
     console.log(error);
   }
