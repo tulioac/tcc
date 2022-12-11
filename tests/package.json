@@ -1,0 +1,15 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "puppeteer": "^19.4.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  }
+}
