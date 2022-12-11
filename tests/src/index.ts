@@ -9,13 +9,7 @@ import { authorsDivSelector, sleep } from "./utils";
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
-  // const pageSession = await page.target().createCDPSession();
-
-  // // O valor não é exibido na aba de performance do Chrome, não sei se é assim mesmo, ou não está funcionando
-  // // Tentativa 01
-  // await pageSession.send("Emulation.setCPUThrottlingRate", { rate: 6 });
-  // // Tentativa 02
-  // await page.emulateCPUThrottling(6);
+  await page.emulateCPUThrottling(6);
 
   await page.goto(URL);
 
@@ -35,7 +29,6 @@ import { authorsDivSelector, sleep } from "./utils";
 
   await measure(page, () => simulateInteractions(authorsButtons));
 
-  // await browser.close();
   console.log("Ending puppeteer");
 })();
 
