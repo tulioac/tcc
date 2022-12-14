@@ -1,7 +1,7 @@
 import puppeteer, { ElementHandle, Page } from "puppeteer";
 
-import { AUTHORS_QUANTITY, TRACING_FILE_PATH, URL } from "./constants";
-import { authorsDivSelector, sleep } from "./utils";
+import { CPU_THROTTLING_FACTOR, TRACING_FILE_PATH, URL } from "./constants";
+import { authorsElements } from "./elementsSelectors";
 
 (async () => {
   console.log("Initiating puppeteer");
@@ -9,25 +9,18 @@ import { authorsDivSelector, sleep } from "./utils";
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
-  await page.emulateCPUThrottling(6);
+  await page.emulateCPUThrottling(CPU_THROTTLING_FACTOR);
 
   await page.goto(URL);
 
-  const authorsButtons = await Promise.all(
-    Array(AUTHORS_QUANTITY)
-      .fill(null)
-      .map(async (_, index) => {
-        const authorSelector = authorsDivSelector(index + 1);
+  const authorsButtons = await Promise.all(authorsElements(page));
 
-        const element = await page.waitForSelector(authorSelector);
+  const simulate = () => simulateInteractions(authorsButtons);
 
-        return element;
-      })
-  );
+  await measure(page, simulate);
 
-  await sleep(5);
-
-  await measure(page, () => simulateInteractions(authorsButtons));
+  await page.close();
+  await browser.close();
 
   console.log("Ending puppeteer");
 })();
@@ -35,44 +28,36 @@ import { authorsDivSelector, sleep } from "./utils";
 async function simulateInteractions(authorsButtons: ElementHandle<Element>[]) {
   console.log("Initiating simulation...");
 
-  await authorsButtons[0].click();
-  await authorsButtons[1].click();
-  await authorsButtons[2].click();
+  const [firstAuthor, secondAuthor, thirdAuthor] = authorsButtons;
 
-  await authorsButtons[2].click();
-  await authorsButtons[1].click();
-  await authorsButtons[0].click();
+  // Simulate an miss click that needs to be canceled by another click
+  await firstAuthor.click();
+  await firstAuthor.click();
 
-  await authorsButtons[0].click();
-  await authorsButtons[0].click();
-  await authorsButtons[0].click();
-
-  await authorsButtons[1].click();
-  await authorsButtons[1].click();
-  await authorsButtons[1].click();
-
-  await authorsButtons[2].click();
-  await authorsButtons[2].click();
-  await authorsButtons[2].click();
+  await secondAuthor.click();
+  await thirdAuthor.click();
 
   console.log("Finished simulation!");
 }
 
 async function measure(page: Page, simulation: () => Promise<void>) {
   const firstMetrics = await page.metrics();
-
   console.info(firstMetrics);
 
+  // Trace and save results at a json file
   await page.tracing.start({
     path: TRACING_FILE_PATH,
     screenshots: true,
   });
 
+  const initialTime = performance.now();
   await simulation();
+  const finalTime = performance.now();
+
+  console.info(`Time spent in interaction: ${finalTime - initialTime} ms`);
 
   await page.tracing.stop();
 
   const lastMetrics = await page.metrics();
-
   console.info(lastMetrics);
 }
