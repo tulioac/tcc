@@ -40,6 +40,10 @@ async function simulateInteractions(authorsButtons: ElementHandle<Element>[]) {
   console.log("Finished simulation!");
 }
 
+function delay(seconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+}
+
 async function measure(page: Page, simulation: () => Promise<void>) {
   const firstMetrics = await page.metrics();
   console.info(firstMetrics);
@@ -52,6 +56,8 @@ async function measure(page: Page, simulation: () => Promise<void>) {
 
   const initialTime = performance.now();
   await simulation();
+
+  await delay(1);
   const finalTime = performance.now();
 
   console.info(`Time spent in interaction: ${finalTime - initialTime} ms`);
