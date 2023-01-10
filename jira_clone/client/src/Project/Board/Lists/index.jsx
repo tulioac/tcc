@@ -94,4 +94,4 @@ const getSortedListIssues = (issues, status) =>
 
 ProjectBoardLists.propTypes = propTypes;
 
-export default ProjectBoardLists;
+export default React.memo(ProjectBoardLists);
