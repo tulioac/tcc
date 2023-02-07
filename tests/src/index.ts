@@ -57,7 +57,9 @@ async function measure(page: Page, simulation: () => Promise<void>) {
   const initialTime = performance.now();
   await simulation();
 
-  await delay(1);
+  const secondsToDelay = 2;
+  await delay(secondsToDelay);
+
   const finalTime = performance.now();
 
   console.info(`Time spent in interaction: ${finalTime - initialTime} ms`);
